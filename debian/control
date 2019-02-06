@@ -2,51 +2,95 @@ Source: bumblebee
 Section: utils
 Priority: optional
 Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
-Uploaders: 
- Aron Xu <aron@debian.org>, 
- Vincent Cheng <Vincentc1208@gmail.com>,
- Yunqiang Su <wzssyqa@gmail.com>
-Build-Depends: debhelper (>= 9), libbsd-dev (>= 0.2.0), pkg-config,
- libx11-dev, libglib2.0-dev, help2man
-Standards-Version: 3.9.4
+Uploaders:
+ Aron Xu <aron@debian.org>,
+ Vincent Cheng <vcheng@debian.org>,
+ Yunqiang Su <wzssyqa@gmail.com>,
+ Luca Boccassi <bluca@debian.org>,
+Build-Depends:
+ debhelper-compat (= 12),
+ help2man,
+ libbsd-dev,
+ libglib2.0-dev,
+ libx11-dev,
+ pkg-config,
+ libkmod-dev,
+Rules-Requires-Root: no
+Standards-Version: 4.3.0
 Homepage: https://launchpad.net/~bumblebee
-Vcs-Git: git://anonscm.debian.org/pkg-nvidia/bumblebee.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-nvidia/bumblebee.git
+Vcs-Browser: https://salsa.debian.org/nvidia-team/bumblebee
+Vcs-Git: https://salsa.debian.org/nvidia-team/bumblebee.git
 
 Package: bumblebee
 Architecture: linux-any
-Depends: ${shlibs:Depends}, ${misc:Depends}, bbswitch-dkms
-Recommends: virtualgl | primus
-Suggests: bumblebee-nvidia (= ${binary:Version})
+Pre-Depends:
+ ${misc:Pre-Depends},
+Depends:
+ bbswitch-dkms | bbswitch-source,
+ lsb-base,
+ xserver-xorg-core (>= 2:1.18),
+ ${misc:Depends},
+ ${shlibs:Depends},
+Recommends:
+ virtualgl | primus,
+Suggests:
+ bumblebee-nvidia (= ${binary:Version}),
 Description: NVIDIA Optimus support for Linux
  Bumblebee is an effort to make NVIDIA Optimus enabled laptops work in
- GNU/Linux systems. These laptops are built in such a way that the NVIDIA 
+ GNU/Linux systems. These laptops are built in such a way that the NVIDIA
  graphics card can be used on demand so that battery life is improved and
  temperature is kept low.
  .
- It disables the discrete graphics card if no client is detected, and start
+ It disables the discrete graphics card if no client is detected, and starts
  an X server making use of NVIDIA card if requested then let software GL
  implementations (such as VirtualGL) copy frames to the visible display that
- runs on the intergrated graphics. The ability to use discrete graphics
+ runs on the integrated graphics. The ability to use discrete graphics
  depends on the driver: open source nouveau and proprietary nvidia.
 
 Package: bumblebee-nvidia
 Architecture: amd64 i386
 Section: contrib/utils
-Depends: ${shlibs:Depends}, ${misc:Depends}, bumblebee (= ${binary:Version}),
- nvidia-glx | nvidia-304 | nvidia-304-updates | nvidia-experimental-304 |
+Depends:
+ bumblebee (= ${binary:Version}),
+ ${misc:Depends},
+ ${nvidia:Depends},
+# proprietary NVIDIA packages in Debian
+ nvidia-driver |
+ nvidia-legacy-390xx-driver |
+ nvidia-legacy-340xx-driver |
+ nvidia-legacy-304xx-driver |
+ nvidia-kernel-dkms |
+ nvidia-legacy-390xx-kernel-dkms |
+ nvidia-legacy-340xx-kernel-dkms |
+ nvidia-legacy-304xx-kernel-dkms |
+# proprietary NVIDIA packages in Ubuntu
+ nvidia | nvidia-current | nvidia-current-updates | nvidia-driver-binary |
+ nvidia-304 | nvidia-304-updates | nvidia-experimental-304 |
  nvidia-310 | nvidia-310-updates | nvidia-experimental-310 |
- nvidia-313 | nvidia-313-updates | nvidia-experimental-313
-Recommends: virtualgl | primus-nvidia
+ nvidia-313 | nvidia-313-updates | nvidia-experimental-313 |
+ nvidia-319 | nvidia-319-updates | nvidia-experimental-319 |
+ nvidia-325 | nvidia-325-updates | nvidia-experimental-325 |
+ nvidia-331 | nvidia-331-updates | nvidia-experimental-331 |
+ nvidia-334 | nvidia-334-updates | nvidia-experimental-334 |
+ nvidia-337 | nvidia-337-updates | nvidia-experimental-337 |
+ nvidia-340 | nvidia-340-updates | nvidia-experimental-340 |
+ nvidia-343 | nvidia-343-updates | nvidia-experimental-343 |
+ nvidia-346 | nvidia-346-updates | nvidia-experimental-346 |
+ nvidia-349 | nvidia-349-updates | nvidia-experimental-349 |
+ nvidia-352 | nvidia-352-updates | nvidia-experimental-352 |
+ nvidia-355 | nvidia-355-updates | nvidia-experimental-355 |
+ nvidia-358 | nvidia-358-updates | nvidia-experimental-358 |
+ nvidia-361 | nvidia-361-updates | nvidia-experimental-361 |
+ nvidia-364 | nvidia-364-updates | nvidia-experimental-364 |
+ nvidia-367 | nvidia-367-updates | nvidia-experimental-367 |
+ nvidia-375 | nvidia-375-updates | nvidia-experimental-375 |
+ nvidia-378 | nvidia-378-updates | nvidia-experimental-378 |
+ nvidia-381 | nvidia-381-updates | nvidia-experimental-381 |
+ nvidia-384 | nvidia-384-updates | nvidia-experimental-384 |
+ nvidia-387 | nvidia-387-updates | nvidia-experimental-387 |
+ nvidia-driver-390 |
+ nvidia-driver-410
 Description: NVIDIA Optimus support using the proprietary NVIDIA driver
  This metapackage ensures that the proprietary NVIDIA driver is installed in a
  way such that 3D acceleration does not break. It does so by configuring the
  OpenGL library path to use the Mesa graphics library.
-
-Package: bumblebee-dbg
-Priority: extra
-Architecture: linux-any
-Section: debug
-Depends: ${misc:Depends}, bumblebee (= ${binary:Version})
-Description: NVIDIA Optimus support - debugging symbols
- This package contains the debugging symbols for bumblebee.

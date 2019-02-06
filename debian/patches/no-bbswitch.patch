@@ -1,0 +1,82 @@
+Description: Add option to always unload the driver on exit
+Origin: upstream, https://github.com/Bumblebee-Project/Bumblebee/pull/983
+--- a/src/bbconfig.c
++++ b/src/bbconfig.c
+@@ -462,6 +462,10 @@ void bbconfig_parse_conf_driver(GKeyFile
+       g_free(module_name);
+     }
+   }
++  key = "AlwaysUnloadKernelDriver";
++  if (g_key_file_has_key(bbcfg, section, key, NULL)) {
++    bb_config.force_driver_unload = g_key_file_get_boolean(bbcfg, section, key, NULL);
++  }
+   key = "LibraryPath";
+   if (g_key_file_has_key(bbcfg, section, key, NULL)) {
+     free_and_set_value(&bb_config.ld_path, g_key_file_get_string(bbcfg, section, key, NULL));
+--- a/src/bbconfig.h
++++ b/src/bbconfig.h
+@@ -145,6 +145,7 @@ struct bb_config_struct {
+     char * module_name; /* Kernel module to be loaded for the driver.
+                                     * If empty, driver will be used. This is
+                                     * for Ubuntu which uses nvidia-current */
++    int force_driver_unload; /* Force driver unload, even without active PM method */
+     int card_shutdown_state;
+ #ifdef WITH_PIDFILE
+     char *pid_file; /* pid file for storing the daemons PID */
+--- a/src/bbsecondary.c
++++ b/src/bbsecondary.c
+@@ -223,24 +223,31 @@ bool start_secondary(bool need_secondary
+ static void switch_and_unload(void)
+ {
+   char driver[BUFFER_SIZE];
++  int unload_driver = 0;
+ 
+-  if (bb_config.pm_method == PM_DISABLED && bb_status.runmode != BB_RUN_EXIT) {
++  if (bb_config.pm_method == PM_DISABLED && !bb_config.force_driver_unload && bb_status.runmode != BB_RUN_EXIT) {
+     /* do not disable the card if PM is disabled unless exiting */
+     return;
+   }
+ 
+   //if card is on and can be switched, switch it off
++  if (switcher && switcher->need_driver_unloaded) {
++    /* do not unload the drivers nor disable the card if the card is not on */
++    if (switcher->status() != SWITCH_ON) {
++      return;
++    }
++    unload_driver = 1;
++  }
++
++  if (unload_driver || bb_config.force_driver_unload) {
++    /* unload the driver loaded by the graphica card */
++    if (pci_get_driver(driver, pci_bus_id_discrete, sizeof driver)) {
++      module_unload(driver);
++    }
++  }
++
+   if (switcher) {
+     if (switcher->need_driver_unloaded) {
+-      /* do not unload the drivers nor disable the card if the card is not on */
+-      if (switcher->status() != SWITCH_ON) {
+-        return;
+-      }
+-      /* unload the driver loaded by the graphica card */
+-      if (pci_get_driver(driver, pci_bus_id_discrete, sizeof driver)) {
+-        module_unload(driver);
+-      }
+-
+       //only turn card off if no drivers are loaded
+       if (pci_get_driver(NULL, pci_bus_id_discrete, 0)) {
+         bb_log(LOG_DEBUG, "Drivers are still loaded, unable to disable card\n");
+--- a/conf/bumblebee.conf.in
++++ b/conf/bumblebee.conf.in
+@@ -62,6 +62,10 @@ LibraryPath=@CONF_LDPATH_NVIDIA@
+ # default Xorg modules path
+ XorgModulePath=@CONF_MODPATH_NVIDIA@
+ XorgConfFile=@BBCONFDIR@/xorg.conf.nvidia
++# If set to true, will always unload the kernel module(s) even with
++# PMMethod=none - useful for newer Optimus models on which the kernel power
++# management works out of the box to power the card on/off without bbswitch.
++AlwaysUnloadKernelDriver=false
+ 
+ ## Section with nouveau driver specific options, only parsed if Driver=nouveau
+ [driver-nouveau]

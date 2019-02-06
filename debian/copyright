@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: bumblebee
 Source: https://github.com/Bumblebee-Project/Bumblebee
 
@@ -11,7 +11,7 @@ Copyright: 2011-2013 Peter Lekensteyn <lekensteyn@gmail.com>
            2011-2013 Bruno Pagani <bruno.n.pagani@gmail.com>
            2012 Igor Urazov <z0rc3r@gmail.com>
            2013 Aron Xu <aron@debian.org>
-           2013 Vincent Cheng <Vincentc1208@gmail.com>
+           2013 Vincent Cheng <vcheng@debian.org>
 License: GPL-3.0+
 
 License: GPL-3.0+

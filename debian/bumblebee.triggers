@@ -1,0 +1,2 @@
+activate-noawait update-initramfs
+interest-noawait restart-bumblebeed

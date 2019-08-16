@@ -8,3 +8,4 @@ ignore-failure-to-set-DRM-interface.patch
 libkmod.patch
 amd-apu.patch
 no-bbswitch.patch
+fix-dm-race-condition.patch

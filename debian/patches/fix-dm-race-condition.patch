@@ -1,0 +1,27 @@
+Description: Fix race condition between display manager and bumblebee.
+ bumblebee (3.2.1-20parrot1) rolling; urgency=medium
+ .
+   * Avoid the service execution before the display manager is started.
+Author: h0tw4t3r <h0tw4t3r@parrotsec.org>
+Reviewed-By: Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>
+Last-Update: 2019-08-16
+
+--- bumblebee-3.2.1.orig/scripts/systemd/bumblebeed.service.in
++++ bumblebee-3.2.1/scripts/systemd/bumblebeed.service.in
+@@ -1,5 +1,7 @@
+ [Unit]
+ Description=Bumblebee C Daemon
++After=display-manager.service
++BindsTo=display-manager.service
+ 
+ [Service]
+ Type=simple
+@@ -8,7 +10,7 @@ ExecStart=@SBINDIR@/bumblebeed
+ Restart=always
+ RestartSec=60
+ StandardOutput=kmsg
++ExecStartPre=/bin/sleep 5
+ 
+ [Install]
+ WantedBy=graphical.target
+-

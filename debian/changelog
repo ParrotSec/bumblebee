@@ -1,0 +1,19 @@
+bumblebee (3.1-1) experimental; urgency=low
+
+  * New upstream release.
+  * Upload to experimental.
+
+ -- Vincent Cheng <Vincentc1208@gmail.com>  Tue, 09 Apr 2013 19:59:13 -0700
+
+bumblebee (3.0.1-1) unstable; urgency=low
+
+  [ Aron Xu ]
+  * Initial release (Closes: #659440).
+  * Thanks to Peter Lekensteyn and Bruno Pagani, most stuff taken from the
+    packaging for Ubuntu PPA.
+
+  [ Vincent Cheng ]
+  * Thanks to Igor Urazov for lots of the Debian-specific portions of the
+    packaging.
+
+ -- Aron Xu <aron@debian.org>  Mon, 14 Jan 2013 22:16:25 +0800

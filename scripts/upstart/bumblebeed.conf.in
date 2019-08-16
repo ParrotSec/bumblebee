@@ -1,0 +1,14 @@
+# Upstart job for Bumblebee daemon
+
+description "Bumblebee supporting nVidia Optimus cards"
+author      "Lekensteyn <lekensteyn@gmail.com>"
+
+# XXX: do we need to stop before / after a graphical DE like kdm?
+start on    (login-session-start or desktop-session-start)
+stop on     (desktop-shutdown)
+
+# restart in case it crashed for some reason
+respawn
+
+# don't use --daemon as Upstart gets confused by that.
+exec '@SBINDIR@/bumblebeed' --use-syslog

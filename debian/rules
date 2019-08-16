@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@ 
+
+override_dh_auto_configure:
+# Ubuntu and Debian's packaging of nvidia's proprietary driver differ greatly
+ifeq ($(shell dpkg-vendor --derives-from Ubuntu && echo yes),yes)
+	dh_auto_configure -- \
+		CONF_DRIVER_MODULE_NVIDIA=nvidia-current \
+		CONF_LDPATH_NVIDIA=/usr/lib/nvidia-current:/usr/lib32/nvidia-current \
+		CONF_MODPATH_NVIDIA=/usr/lib/nvidia-current/xorg,/usr/lib/xorg/modules
+else
+	dh_auto_configure -- \
+		CONF_DRIVER_MODULE_NVIDIA=nvidia \
+		CONF_LDPATH_NVIDIA=/usr/lib/x86_64-linux-gnu/nvidia:/usr/lib/i386-linux-gnu/nvidia:/usr/lib/nvidia \
+		CONF_MODPATH_NVIDIA=/usr/lib/nvidia,/usr/lib/xorg/modules
+endif
+
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/bumblebee/
+
+override_dh_installinit:
+	dh_installinit --name=bumblebeed
+
+override_dh_strip:
+	dh_strip --dbg-package=bumblebee-dbg

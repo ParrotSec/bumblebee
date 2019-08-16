@@ -1,0 +1,14 @@
+bumblebee for Debian/Ubuntu
+---------------------------
+
+Bumblebee in Debian defaults to using the primus backend, not because we wish
+to diverge from upstream, but simply because virtualgl and libjpeg-turbo are
+not yet packaged. libjpeg-turbo is currently blocked by a number of technical
+and/or legal issues in Debian; see http://bugs.debian.org/612341.
+
+Bumblebee in Ubuntu also defaults to using the primus backend, because
+virtualgl has not yet been packaged for Ubuntu proper. It is however easy to
+switch to using virtualgl by using upstream's PPAs. Follow the instructions at:
+https://launchpad.net/~bumblebee/+archive/stable
+
+ -- Vincent Cheng <Vincentc1208@gmail.com>  Wed, 27 Feb 2013 01:07:57 -0800

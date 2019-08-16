@@ -1,0 +1,52 @@
+Source: bumblebee
+Section: utils
+Priority: optional
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Uploaders: 
+ Aron Xu <aron@debian.org>, 
+ Vincent Cheng <Vincentc1208@gmail.com>,
+ Yunqiang Su <wzssyqa@gmail.com>
+Build-Depends: debhelper (>= 9), libbsd-dev (>= 0.2.0), pkg-config,
+ libx11-dev, libglib2.0-dev, help2man
+Standards-Version: 3.9.4
+Homepage: https://launchpad.net/~bumblebee
+Vcs-Git: git://anonscm.debian.org/pkg-nvidia/bumblebee.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-nvidia/bumblebee.git
+
+Package: bumblebee
+Architecture: linux-any
+Depends: ${shlibs:Depends}, ${misc:Depends}, bbswitch-dkms
+Recommends: virtualgl | primus
+Suggests: bumblebee-nvidia (= ${binary:Version})
+Description: NVIDIA Optimus support for Linux
+ Bumblebee is an effort to make NVIDIA Optimus enabled laptops work in
+ GNU/Linux systems. These laptops are built in such a way that the NVIDIA 
+ graphics card can be used on demand so that battery life is improved and
+ temperature is kept low.
+ .
+ It disables the discrete graphics card if no client is detected, and start
+ an X server making use of NVIDIA card if requested then let software GL
+ implementations (such as VirtualGL) copy frames to the visible display that
+ runs on the intergrated graphics. The ability to use discrete graphics
+ depends on the driver: open source nouveau and proprietary nvidia.
+
+Package: bumblebee-nvidia
+Architecture: amd64 i386
+Section: contrib/utils
+Depends: ${shlibs:Depends}, ${misc:Depends}, bumblebee (= ${binary:Version}),
+ nvidia-glx | nvidia-304 | nvidia-304-updates | nvidia-experimental-304 |
+ nvidia-310 | nvidia-310-updates | nvidia-experimental-310 |
+ nvidia-313 | nvidia-313-updates | nvidia-experimental-313
+Recommends: virtualgl | primus-nvidia
+Description: NVIDIA Optimus support using the proprietary NVIDIA driver
+ This metapackage ensures that the proprietary NVIDIA driver is installed in a
+ way such that 3D acceleration does not break. It does so by configuring the
+ OpenGL library path to use the Mesa graphics library.
+
+Package: bumblebee-dbg
+Priority: extra
+Architecture: linux-any
+Section: debug
+Depends: ${misc:Depends}, bumblebee (= ${binary:Version})
+Description: NVIDIA Optimus support - debugging symbols
+ This package contains the debugging symbols for bumblebee.

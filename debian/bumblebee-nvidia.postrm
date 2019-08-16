@@ -1,0 +1,46 @@
+#!/bin/sh
+# postrm script for bumblebee-nvidia
+#
+# see: dh_installdeb(1)
+
+set -e
+
+case "$1" in
+  purge|remove|abort-install)
+  # Ubuntu and Debian's packaging of nvidia's proprietary driver differ greatly
+  # Also, do not rely solely on dpkg-vendor (see LP: #1061769)
+    if (which dpkg-vendor >/dev/null && dpkg-vendor --derives-from Ubuntu) || \
+      [ -e /etc/dpkg/origins/ubuntu ]; then
+
+      # == Ubuntu specific section ==
+      # Restore the alternatives in case bumblebee is installed on a
+      # non-Optimus system that requires the nvidia driver
+      for arch in x86_64-linux-gnu i386-linux-gnu; do
+        update-alternatives --force --auto ${arch}_gl_conf 2>/dev/null || true
+      done
+
+      # versions before Oneiric without multiarch
+      update-alternatives --force --auto gl_conf 2>/dev/null || true
+
+    else
+
+      # == Debian specific section ==
+      # Restore the alternatives in case bumblebee is installed on a
+      # non-Optimus system that requires the nvidia driver
+      update-alternatives --force --auto glx 2>/dev/null || true
+
+    fi
+
+    ldconfig
+    ;;
+  upgrade|failed-upgrade|abort-upgrade|disappear)
+    ;;
+  *)
+    echo "postrm called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
